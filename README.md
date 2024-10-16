@@ -6,4 +6,4 @@ Admin Features: Admins can add, view, update, and delete products. Admins can vi
 
 Tech Stack: React.js, Axios, Tailwind CSS, LocalStorage, React Router.
 
-Vercel link: https://e-commerce-app-mvgv.vercel.app/home
+Vercel link: https://e-commerce-app-mvgv.vercel.app/
