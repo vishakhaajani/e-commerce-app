@@ -7,23 +7,14 @@ const Sigup = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [record, setRecord] = useState("");
+    const [record, setRecord] = useState([]);
     const navigate = useNavigate()
 
     const handleRegistration = async (e) => {
         e.preventDefault();
 
         if(!name || !email || !password){
-            alert('Form can not be empty!', {
-                position: "top-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                });
+            alert('Form can not be empty!');
             return false;
         }
 
@@ -38,7 +29,6 @@ const Sigup = () => {
             const response = await axios.post("http://localhost:5000/userLogin",obj);
             const all = [...record, response.data];
             setRecord(all);
-            alert("User register successfully!");
             setName("");
             setEmail("");
             setPassword("");
