@@ -1,68 +1,70 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Header from './Header';
 import { useNavigate } from 'react-router-dom';
 
 const AdminPanel = () => {
     const [products, setProducts] = useState([]);
-    const [newProduct, setNewProduct] = useState({ name: '', price: '', stock: '' }); 
+    const [newProduct, setNewProduct] = useState({ name: '', price: '', stock: '' });
     const [editProduct, setEditProduct] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get("http://localhost:5000/product");
-                setProducts(response.data);
-            } catch (err) {
-                console.error(err);
-            }
-        };
-        fetchProducts();
+        // Load products from localStorage on component mount
+        const storedProducts = JSON.parse(localStorage.getItem('products')) || [];
+        setProducts(storedProducts);
     }, []);
 
-    const handleDelete = async (productId) => {
-        try {
-            await axios.delete(`http://localhost:5000/product/${productId}`);
-            setProducts(products.filter((product) => product.id !== productId));
-            alert("Product delete successfully!")
-        } catch (err) {
-            console.error(err);
-        }
+    const updateLocalStorage = (updatedProducts) => {
+        // Update products in localStorage
+        localStorage.setItem('products', JSON.stringify(updatedProducts));
     };
 
-    const handleAddProduct = async (e) => {
+    const handleDelete = (productId) => {
+        const updatedProducts = products.filter((product) => product.id !== productId);
+        setProducts(updatedProducts);
+        updateLocalStorage(updatedProducts);
+        alert('Product deleted successfully!');
+    };
+
+    const handleAddProduct = (e) => {
         e.preventDefault();
+
         if (!newProduct.name || !newProduct.price || !newProduct.stock) {
             alert('Please fill in all fields');
             return;
         }
-        try {
-            const response = await axios.post("http://localhost:5000/product", newProduct);
-            setProducts([...products, response.data]);
-            alert("Product add successfully!")
-            navigate('/home');
-            setNewProduct({ name: '', price: '', stock: '' }); 
-        } catch (err) {
-            console.error(err);
-        }
+
+        // Create new product with a unique id
+        const newProductWithId = { ...newProduct, id: Math.floor(Math.random() * 10000) };
+        const updatedProducts = [...products, newProductWithId];
+
+        // Update state and localStorage
+        setProducts(updatedProducts);
+        updateLocalStorage(updatedProducts);
+
+        alert('Product added successfully!');
+        navigate('/home');
+        setNewProduct({ name: '', price: '', stock: '' });
     };
 
-    const handleUpdateProduct = async (e) => {
+    const handleUpdateProduct = (e) => {
         e.preventDefault();
+
         if (!editProduct.name || !editProduct.price || !editProduct.stock) {
             alert('Please fill in all fields');
             return;
         }
-        try {
-            const response = await axios.put(`http://localhost:5000/product/${editProduct.id}`, editProduct);
-            setProducts(products.map(product => (product.id === editProduct.id ? response.data : product)));
-            alert("Product update Successfully!");
-            setEditProduct(null);
-            setNewProduct({ name: '', price: '', stock: '' });
-        } catch (err) {
-            console.error("Error updating product:", err);
-        }
+
+        const updatedProducts = products.map((product) =>
+            product.id === editProduct.id ? editProduct : product
+        );
+
+        setProducts(updatedProducts);
+        updateLocalStorage(updatedProducts);
+
+        alert('Product updated successfully!');
+        setEditProduct(null);
+        setNewProduct({ name: '', price: '', stock: '' });
     };
 
     return (
@@ -100,7 +102,7 @@ const AdminPanel = () => {
                                 onChange={(e) => editProduct ? setEditProduct({ ...editProduct, stock: e.target.value }) : setNewProduct({ ...newProduct, stock: e.target.value })}
                             />
                         </div>
-                        <button type="submit" className={`text-white bg-cyan-800 hover:bg-cyan-900 px-4 py-2 rounded`}>
+                        <button type="submit" className="text-white bg-cyan-800 hover:bg-cyan-900 px-4 py-2 rounded">
                             {editProduct ? 'Update Product' : 'Add Product'}
                         </button>
                     </form>
@@ -121,16 +123,26 @@ const AdminPanel = () => {
                             <tr key={product.id}>
                                 <td className="border border-gray-300 px-4 py-2">{product.name}</td>
                                 <td className="border border-gray-300 px-4 py-2">${product.price}</td>
-                                {
-                                    product.stock < 5
-                                     ? (<td className="border border-gray-300 px-4 py-2 text-red-700">{product.stock} in stock (Low stock need Restocking)</td>) 
-                                     : (<td className="border border-gray-300 px-4 py-2">{product.stock} in stock</td>)
-                                }
+                                {product.stock < 5 ? (
+                                    <td className="border border-gray-300 px-4 py-2 text-red-700">
+                                        {product.stock} in stock (Low stock need Restocking)
+                                    </td>
+                                ) : (
+                                    <td className="border border-gray-300 px-4 py-2">{product.stock} in stock</td>
+                                )}
                                 <td className="border border-gray-300 px-4 py-2 w-60 text-center">
                                     <button
                                         onClick={() => setEditProduct(product)}
-                                        className="bg-yellow-500 text-white px-4 py-2 rounded mr-2">Update</button>
-                                    <button onClick={() => handleDelete(product.id)} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+                                        className="bg-yellow-500 text-white px-4 py-2 rounded mr-2"
+                                    >
+                                        Update
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(product.id)}
+                                        className="bg-red-500 text-white px-4 py-2 rounded"
+                                    >
+                                        Delete
+                                    </button>
                                 </td>
                             </tr>
                         ))}

@@ -1,43 +1,47 @@
-import axios from 'axios';
 import React, { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom';
 
-const Sigup = () => {
-
+const Signup = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [record, setRecord] = useState([]);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    const handleRegistration = async (e) => {
+    const handleRegistration = (e) => {
         e.preventDefault();
 
-        if(!name || !email || !password){
-            alert('Form can not be empty!');
+        if (!name || !email || !password) {
+            alert('Form cannot be empty!');
             return false;
         }
 
-        let obj = {
-            id: Math.floor(Math.random()*10000),
+        // Get the current list of users from localStorage
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+
+        // Create new user object
+        let newUser = {
+            id: Math.floor(Math.random() * 10000),
             name,
             email,
             password
+        };
+
+        // Check if the user already exists
+        const userExists = users.some(user => user.email === email);
+        if (userExists) {
+            alert("User with this email already exists!");
+            return;
         }
 
-        try{
-            const response = await axios.post("http://localhost:5000/userLogin",obj);
-            const all = [...record, response.data];
-            setRecord(all);
-            setName("");
-            setEmail("");
-            setPassword("");
-            navigate("/login");
-            
-        }catch(err){
-            console.log(err);
-            return false;    
-        }
+        // Add new user to the list and save it back to localStorage
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+
+        // Reset form and navigate to login page
+        setName("");
+        setEmail("");
+        setPassword("");
+        navigate("/login");
     }
 
     return (
@@ -93,4 +97,4 @@ const Sigup = () => {
     )
 }
 
-export default Sigup
+export default Signup;

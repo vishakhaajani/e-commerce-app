@@ -1,43 +1,39 @@
-import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
 const Login = () => {
-
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    const handleLogin = (e) => {
         e.preventDefault();
 
-        if(!email || !password){
+        if (!email || !password) {
             alert("Form can't be empty!");
             return false;
         }
 
-        try{
-            const response = await axios.get("http://localhost:5000/userLogin");
-            const all = response.data;
-            const user = all.find(user => user.email === email && user.password === password);
-            if(user){
-                alert("Login successfully!");
-                navigate("/home");
-            }else{
-                alert("Invalid email or password!");
-            }
-            setEmail("");
-            setPassword("");
-        }catch(err){
-            console.log(err);
-            return false;    
+        // Get the list of users from localStorage
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+
+        // Find the user with matching email and password
+        const user = users.find(user => user.email === email && user.password === password);
+
+        if (user) {
+            alert(`${user.name}, you have logged in successfully!`);
+            navigate("/home");
+        } else {
+            alert("Invalid email or password!");
         }
+
+        setEmail("");
+        setPassword("");
     }
 
-  return (
-    <div className='flex justify-center items-center min-h-screen bg-cyan-800'>
+    return (
+        <div className='flex justify-center items-center min-h-screen bg-cyan-800'>
             <div className='bg-white p-8 rounded-lg shadow-lg w-96'>
                 <h2 className='text-2xl font-bold text-center mb-6'>Login</h2>
                 <form onSubmit={handleLogin}>
@@ -74,7 +70,7 @@ const Login = () => {
                 </form>
             </div>
         </div>
-  )
+    )
 }
 
-export default Login
+export default Login;

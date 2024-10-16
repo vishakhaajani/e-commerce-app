@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Header from './Header';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,15 +7,9 @@ const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get("http://localhost:5000/product"); 
-                setProducts(response.data);
-            } catch (err) {
-                console.error("Error fetching products:", err);
-            }
-        };
-        fetchProducts();
+        // Fetch products from localStorage
+        const storedProducts = JSON.parse(localStorage.getItem('products')) || [];
+        setProducts(storedProducts);
     }, []);
 
     const addToCart = (product) => {
@@ -28,7 +21,7 @@ const Home = () => {
     };
 
     return (
-        <div  className="min-h-screen">
+        <div className="min-h-screen">
             <Header />
             <div className="container mx-auto">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-10">
