@@ -15,10 +15,8 @@ const Signup = () => {
             return false;
         }
 
-        // Get the current list of users from localStorage
         const users = JSON.parse(localStorage.getItem('users')) || [];
 
-        // Create new user object
         let newUser = {
             id: Math.floor(Math.random() * 10000),
             name,
@@ -26,18 +24,15 @@ const Signup = () => {
             password
         };
 
-        // Check if the user already exists
         const userExists = users.some(user => user.email === email);
         if (userExists) {
             alert("User with this email already exists!");
             return;
         }
 
-        // Add new user to the list and save it back to localStorage
         users.push(newUser);
         localStorage.setItem('users', JSON.stringify(users));
-
-        // Reset form and navigate to login page
+        alert("Signup successfully!")
         setName("");
         setEmail("");
         setPassword("");
