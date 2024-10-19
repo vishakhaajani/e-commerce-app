@@ -15,7 +15,7 @@ const OrderHistory = () => {
     return (
         <div>
             <Header />
-            <div className="container mx-auto">
+            <div className="container mx-auto px-20">
                 <h2 className="text-2xl font-bold my-6 text-center">Order History</h2>
                 {orders.length === 0 ? (
                     <p className="text-center">No orders found.</p>

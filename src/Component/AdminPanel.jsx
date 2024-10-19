@@ -70,7 +70,7 @@ const AdminPanel = () => {
     return (
         <div>
             <Header />
-            <div className="container mx-auto">
+            <div className="container mx-auto px-20">
                 <h2 className="text-2xl text-center font-bold my-5">{editProduct ? 'Update Product' : 'Add New Product'}</h2>
 
                 <div className='w-1/2 mx-auto p-10 shadow-2xl mb-10'>

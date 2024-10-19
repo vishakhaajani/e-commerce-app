@@ -23,7 +23,7 @@ const Home = () => {
     return (
         <div className="min-h-screen">
             <Header />
-            <div className="container mx-auto">
+            <div className="container mx-auto px-20">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-10">
                     {products.map((product) => (
                         <div 
